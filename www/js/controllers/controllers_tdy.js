@@ -2271,7 +2271,8 @@ angular.module('tdy.controllers', ['ionic','kidney.services','ionic-datepicker']
   $scope.noCounsels = []
   var load = function () {
     Message.getMessages({
-      type: 14 // 14是为及时咨询报告消息
+      type: 14, // 14是为及时咨询报告消息
+      readOrNot:0
     }).then(function (data) {
       console.log(data)
       // for (var i = 0; i < data.results.length; i++) {        
@@ -2336,7 +2337,7 @@ angular.module('tdy.controllers', ['ionic','kidney.services','ionic-datepicker']
 }])
 
 // 患者超标警戒提醒
-.controller('patientAlertsCtrl', ['$scope', '$state', '$interval', '$rootScope', 'Storage', 'Message', function ($scope, $state, $interval, $rootScope, Storage, Message) {
+.controller('patientAlertsCtrl', ['$scope', '$state', '$interval', '$rootScope', 'Storage', 'Message', 'New', function ($scope, $state, $interval, $rootScope, Storage, Message, New) {
   $scope.patientAlerts = []
   var load = function () {
     Message.getMessages({
@@ -2352,8 +2353,29 @@ angular.module('tdy.controllers', ['ionic','kidney.services','ionic-datepicker']
   $scope.$on('$ionicView.beforeEnter', function () {
     load()
   })
+
   // 下拉刷新
   $scope.doRefresh = function () {
+  // 标记红点去掉
+     New.getNewsByReadOrNot({userId: Storage.get('UID'), type:2, readOrNot: 0,userRole: 'doctor'}).then(
+            function (data) {
+              if (data.results) {
+                console.log(data.results)
+                if (data.results[0].readOrNot == 0) {
+                  data.results[0].readOrNot = 1
+                  New.changeNewsStatus(data.results[0]).then(
+                    function (data) {
+                      console.log(data)
+                    }, function (err) {
+                    console.log(err)
+                  })
+                  
+                }
+              }
+            }, function (err) {
+    }
+
+        )
     load()
     // Stop the ion-refresher from spinning
     $scope.$broadcast('scroll.refreshComplete')

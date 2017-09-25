@@ -95,7 +95,7 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
          */
         logPromise.then(function (data) {
           if (data.results == 1) {
-            if (data.mesg == "Alluser doesn't Exist!") {
+            if (data.mesg == "Alluser doesn't Exist!" || data.mesg == 'No authority!') {
               $scope.logStatus = '账号不存在！'
             } else if (data.mesg == "Alluser password isn't correct!") {
               $scope.logStatus = '账号或密码错误！'
@@ -4418,11 +4418,27 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
           if (dateNow >= dateB && dateNow <= dateE) {
             $scope.stausText = '停诊中...'
             $scope.suspend = true
+            $scope.stausButtontText = '取消停诊'
+          } else if (dateNow > dateE) {
+            var param = {
+              // token: Storage.get('TOKEN'),
+              start: $scope.begin,
+              end: $scope.end
+            }
+            console.log(param)
+            services.deleteSuspend(param).then(function (data) {
+              console.log(data)
+              $scope.stausButtontText = '设置停诊'
+              $scope.stausText = '接诊中...'
+              $scope.suspend = false
+            }, function (err) {
+              console.log(err)
+            })
           } else {
             $scope.stausText = '接诊中...'
+            $scope.stausButtontText = '取消停诊'
             $scope.suspend = true
           }
-          $scope.stausButtontText = '取消停诊'
         }
       }, function (err) {
         console.log(err)
@@ -5318,6 +5334,7 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
   $scope.getDetail = function (noCounsel) {
     Storage.set('noCounselurl', noCounsel.url)
     Storage.set('noCounselMes', noCounsel.messageId)
+    Storage.set('readReport', noCounsel.readOrNot)
     $state.go('tab.nocodetail')
   }
 }])
@@ -5326,21 +5343,24 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
 .controller('nocodetailCtrl', ['$scope', '$state', '$interval', '$rootScope', 'Storage', 'Message', '$http', function ($scope, $state, $interval, $rootScope, Storage, Message, $http) {
   var noCounselurl = Storage.get('noCounselurl')
   // console.log(noCounselurl)
-  Message.editStatus({
-    type: 14, // 14是为及时咨询报告消息
-    messageId: Storage.get('noCounselMes'),
-    readOrNot: 1
-  }).then(function (data) {
-    console.log(data)
-  }, function (err) {
-    console.log(err)
-  })
+  if (Storage.get('readReport') == 0) {
+    Message.editStatus({
+      type: 14, // 14是为及时咨询报告消息
+      messageId: Storage.get('noCounselMes'),
+      readOrNot: 1
+    }).then(function (data) {
+      console.log(data)
+      Storage.rm('readReport')
+    }, function (err) {
+      console.log(err)
+    })
+  }
 
   $http({
     method: 'GET',
     url: noCounselurl
   }).success(function (data) {
-    // console.log(data)
+    console.log(data)
     $scope.details = data.results
   })
 }])
@@ -5398,18 +5418,18 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
 
 // 论坛
 .controller('allpostsCtrl', ['$interval', '$scope', '$state', '$sce', '$http', 'Storage', 'Forum', '$stateParams', '$ionicPopup', '$ionicPopover', '$ionicLoading', '$ionicScrollDelegate', function ($interval, $scope, $state, $sce, $http, Storage, Forum, $stateParams, $ionicPopup, $ionicPopover, $ionicLoading, $ionicScrollDelegate) {
-  $scope.barStyle = {'margin-top': '40px'}
-  if (ionic.Platform.isIOS()) {
-    $scope.barStyle = {'margin-top': '60px'}
-  }
-  $scope.contentStyle = {'margin-top': '32px'}
-  if (ionic.Platform.isIOS()) {
-    $scope.contentStyle = {'margin-top': '44px'}
-  }
-  $scope.divStyle = {'margin-bottom': '3px'}
-  if (ionic.Platform.isIOS()) {
-    $scope.divStyle = {'margin-bottom': '20px'}
-  }
+  // $scope.barStyle = {'margin-top': '40px'}
+  // if (ionic.Platform.isIOS()) {
+  //   $scope.barStyle = {'margin-top': '60px'}
+  // }
+  // $scope.contentStyle = {'margin-top': '32px'}
+  // if (ionic.Platform.isIOS()) {
+  //   $scope.contentStyle = {'margin-top': '44px'}
+  // }
+  // $scope.divStyle = {'margin-bottom': '3px'}
+  // if (ionic.Platform.isIOS()) {
+  //   $scope.divStyle = {'margin-bottom': '20px'}
+  // }
   var allposts = []
   $scope.posts = []
   $scope.moredata = true
@@ -5541,20 +5561,20 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
     // $scope.posts = $scope.allposts
     pagecontrol = {skip: 0, limit: 10},
     allposts = []
-    $scope.posts = $scope.loadMore()
+    $scope.loadMore()
   }
     // ----------------结束搜索患者------------------
 }])
 
 .controller('mypostsCtrl', ['$interval', '$scope', '$state', '$sce', '$http', 'Storage', 'Forum', '$stateParams', '$ionicPopup', '$ionicPopover', '$ionicLoading', '$ionicScrollDelegate', function ($interval, $scope, $state, $sce, $http, Storage, Forum, $stateParams, $ionicPopup, $ionicPopover, $ionicLoading, $ionicScrollDelegate) {
-  $scope.barStyle = {'margin-top': '40px'}
-  if (ionic.Platform.isIOS()) {
-    $scope.barStyle = {'margin-top': '60px'}
-  }
-  $scope.contentStyle = {'margin-top': '35px'}
-  if (ionic.Platform.isIOS()) {
-    $scope.contentStyle = {'margin-top': '40px'}
-  }
+  // $scope.barStyle = {'margin-top': '40px'}
+  // if (ionic.Platform.isIOS()) {
+  //   $scope.barStyle = {'margin-top': '60px'}
+  // }
+  // $scope.contentStyle = {'margin-top': '35px'}
+  // if (ionic.Platform.isIOS()) {
+  //   $scope.contentStyle = {'margin-top': '40px'}
+  // }
   var myposts = []
   $scope.posts = []
   $scope.moredata = true
@@ -5677,14 +5697,14 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
 }])
 
 .controller('mycollectionCtrl', ['$interval', '$scope', '$state', '$sce', '$http', 'Storage', 'Forum', '$stateParams', '$ionicPopup', '$ionicPopover', '$ionicLoading', '$ionicScrollDelegate', function ($interval, $scope, $state, $sce, $http, Storage, Forum, $stateParams, $ionicPopup, $ionicPopover, $ionicLoading, $ionicScrollDelegate) {
-  $scope.barStyle = {'margin-top': '40px'}
-  if (ionic.Platform.isIOS()) {
-    $scope.barStyle = {'margin-top': '60px'}
-  }
-  $scope.contentStyle = {'margin-top': '35px'}
-  if (ionic.Platform.isIOS()) {
-    $scope.contentStyle = {'margin-top': '40px'}
-  }
+  // $scope.barStyle = {'margin-top': '40px'}
+  // if (ionic.Platform.isIOS()) {
+  //   $scope.barStyle = {'margin-top': '60px'}
+  // }
+  // $scope.contentStyle = {'margin-top': '35px'}
+  // if (ionic.Platform.isIOS()) {
+  //   $scope.contentStyle = {'margin-top': '40px'}
+  // }
   var mycollection = []
   $scope.posts = []
   $scope.moredata = true

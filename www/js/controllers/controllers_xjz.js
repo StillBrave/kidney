@@ -83,10 +83,10 @@ angular.module('xjz.controllers', ['ionic', 'kidney.services'])
 .controller('GroupsSearchCtrl', ['$scope', '$state', 'Communication', '$ionicLoading', 'QRScan', function ($scope, $state, Communication, $ionicLoading, QRScan) {
   $scope.search = ''
   $scope.noteam = 0
-  $scope.searchStyle = {'margin-top': '44px'}
-  if (ionic.Platform.isIOS()) {
-    $scope.searchStyle = {'margin-top': '64px'}
-  }
+  // $scope.searchStyle = {'margin-top': '44px'}
+  // if (ionic.Platform.isIOS()) {
+  //   $scope.searchStyle = {'margin-top': '64px'}
+  // }
   /**
    * 搜索群号
    * @Author   xjz
@@ -128,12 +128,12 @@ angular.module('xjz.controllers', ['ionic', 'kidney.services'])
  * @DateTime 2017-07-05
  */
 .controller('DoctorSearchCtrl', ['$scope', '$state', '$ionicHistory', 'arrTool', 'Communication', '$ionicLoading', '$rootScope', 'Patient', 'CONFIG', 'Storage', function ($scope, $state, $ionicHistory, arrTool, Communication, $ionicLoading, $rootScope, Patient, CONFIG, Storage) {
-  $scope.searchStyle = {'margin-top': '44px'}
-  if (ionic.Platform.isIOS()) {
-    $scope.searchStyle = {'margin-top': '64px'}
-    $scope.docStyle = {'margin-top': '20px'}
-  }
-  $scope.docStyle = {'margin-top': '0px'}
+  // $scope.searchStyle = {'margin-top': '44px'}
+  // if (ionic.Platform.isIOS()) {
+  //   $scope.searchStyle = {'margin-top': '64px'}
+  //   $scope.docStyle = {'margin-top': '20px'}
+  // }
+  // $scope.docStyle = {'margin-top': '0px'}
 
     // get groupId via $state.params.groupId
   $scope.moredata = true
@@ -1668,15 +1668,15 @@ angular.module('xjz.controllers', ['ionic', 'kidney.services'])
  * @DateTime 2017-07-05
  */
 .controller('GroupAddMemberCtrl', ['$scope', 'Storage', '$state', '$ionicHistory', 'arrTool', 'Communication', '$ionicLoading', '$rootScope', 'Patient', 'CONFIG', function ($scope, Storage, $state, $ionicHistory, arrTool, Communication, $ionicLoading, $rootScope, Patient, CONFIG) {
-  $scope.searchStyle = {'margin-top': '44px'}
-  if (ionic.Platform.isIOS()) {
-    $scope.searchStyle = {'margin-top': '64px'}
-  }
-  $scope.memStyle = {'padding': '3px 16px', 'position': 'absolute', 'top': '88px', 'height': '50px', 'width': '100%', 'margin': '0', 'max-height': '30vh', 'overflow-y': 'scroll'}
-  if (ionic.Platform.isIOS()) {
-    $scope.memStyle = {'padding': '3px 16px', 'position': 'absolute', 'top': '108px', 'height': '50px', 'width': '100%', 'margin-top': '0px', 'max-height': '30vh', 'overflow-y': 'scroll'}
-  }
-    // get groupId via $state.params.groupId
+  // $scope.searchStyle = {'margin-top': '44px'}
+  // if (ionic.Platform.isIOS()) {
+  //   $scope.searchStyle = {'margin-top': '64px'}
+  // }
+  // $scope.memStyle = {'padding': '3px 16px', 'position': 'absolute', 'top': '88px', 'height': '50px', 'width': '100%', 'margin': '0', 'max-height': '30vh', 'overflow-y': 'scroll'}
+  // if (ionic.Platform.isIOS()) {
+  //   $scope.memStyle = {'padding': '3px 16px', 'position': 'absolute', 'top': '108px', 'height': '50px', 'width': '100%', 'margin-top': '0px', 'max-height': '30vh', 'overflow-y': 'scroll'}
+  // }
+  // get groupId via $state.params.groupId
   $scope.moredata = true
   $scope.issearching = true
   $scope.isnotsearching = false
@@ -1797,10 +1797,10 @@ angular.module('xjz.controllers', ['ionic', 'kidney.services'])
 .controller('GroupChatCtrl', ['$ionicPlatform', '$scope', '$state', '$ionicHistory', '$http', '$ionicModal', '$ionicScrollDelegate', '$rootScope', '$stateParams', '$ionicPopover', '$ionicLoading', '$ionicPopup', 'Camera', 'voice', 'Communication', 'Storage', 'Doctor', '$q', 'CONFIG', 'arrTool', 'New', 'socket', 'notify', '$timeout', function ($ionicPlatform, $scope, $state, $ionicHistory, $http, $ionicModal, $ionicScrollDelegate, $rootScope, $stateParams, $ionicPopover, $ionicLoading, $ionicPopup, Camera, voice, Communication, Storage, Doctor, $q, CONFIG, arrTool, New, socket, notify, $timeout) {
   if ($ionicPlatform.is('ios'))cordova.plugins.Keyboard.disableScroll(true)
 
-  $scope.itemStyle = {'position': 'absolute', 'top': '44px', 'width': '100%', 'margin': '0', 'min-height': '35vh', 'max-height': '55vh', 'overflow-y': 'scroll'}
-  if (ionic.Platform.isIOS()) {
-    $scope.itemStyle = {'position': 'absolute', 'top': '64px', 'width': '100%', 'margin': '0', 'min-height': '35vh', 'max-height': '55vh', 'overflow-y': 'scroll'}
-  }
+  // $scope.itemStyle = {'position': 'absolute', 'top': '44px', 'width': '100%', 'margin': '0', 'min-height': '35vh', 'max-height': '55vh', 'overflow-y': 'scroll'}
+  // if (ionic.Platform.isIOS()) {
+  //   $scope.itemStyle = {'position': 'absolute', 'top': '64px', 'width': '100%', 'margin': '0', 'min-height': '35vh', 'max-height': '55vh', 'overflow-y': 'scroll'}
+  // }
   $scope.input = {
     text: ''
   }
@@ -3282,25 +3282,24 @@ angular.module('xjz.controllers', ['ionic', 'kidney.services'])
     // };
   $scope.$on('viewcard', function (event, args) {
     event.stopPropagation()
-        // console.log(args[2]);
-        // if (args[2].target.tagName == "IMG") {
-        //     $scope.imageHandle.zoomTo(1, true);
-        //     $scope.imageUrl = args[2].target.currentSrc;
-        //     console.log(args[2].target.attributes.hires.nodeValue);
-        //     $scope.modal.show();
-        // } else {
-        //     Storage.set('getpatientId',args[1].content.contentStringMap.patientId);
-
-        //     var statep={
-        //     type:$scope.params.type,
-        //     chatId:$scope.params.chatId
-        //     }
-        //     Storage.set('backId','tab.detail');
-        //     Storage.set('singleChatParams',JSON.stringify(statep));
-        //     $state.go('tab.patientDetail');
-        //     // $state.go('tab.consult-detail',{consultId:args[1]});
-        // }
-        // $state.go('tab.consult-detail',{consultId:args[1]});
+    console.log(args[2])
+    if (args[2].target.tagName == 'IMG') {
+      $scope.imageHandle.zoomTo(1, true)
+      $scope.imageUrl = args[2].target.currentSrc
+      console.log(args[2].target.attributes.hires.nodeValue)
+      $scope.modal.show()
+    } else {
+      Storage.set('getpatientId', args[1].content.patientId)
+      var statep = {
+        doctorId: $state.params.doctorId,
+        patientId: $state.params.patientId,
+        groupId: $state.params.groupId,
+        teamId: $state.params.teamId
+      }
+      Storage.set('backId', 'tab.view-chat')
+      Storage.set('viewChatParams', JSON.stringify(statep))
+      $state.go('tab.patientDetail')
+    }
   })
 
   $scope.$on('profile', function (event, args) {

@@ -410,12 +410,14 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
               smsType: 2
             }).then(function (data) {
               unablebutton()
-              if (data.mesg.substr(0, 8) == '您的邀请码已发送') {
-                $scope.logStatus = '您的验证码已发送，重新获取请稍后'
-              } else if (data.results == 1) {
-                $scope.logStatus = '验证码发送失败，请稍后再试'
+              if (data.results == 0) {
+                if (data.mesg.substr(0, 8) == '您的邀请码已发送') {
+                  $scope.logStatus = '您的验证码已发送，重新获取请稍后'
+                } else {
+                  $scope.logStatus = '验证码发送成功！'
+                }
               } else {
-                $scope.logStatus = '验证码发送成功！'
+                $scope.logStatus = '验证码发送失败，请稍后再试'
               }
             }, function (err) {
               $scope.logStatus = '验证码发送失败！'
@@ -431,12 +433,14 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
               smsType: 2
             }).then(function (data) {
               unablebutton()
-              if (data.mesg.substr(0, 8) == '您的邀请码已发送') {
-                $scope.logStatus = '您的验证码已发送，重新获取请稍后'
-              } else if (data.results == 1) {
-                $scope.logStatus = '验证码发送失败，请稍后再试'
+              if (data.results == 0) {
+                if (data.mesg.substr(0, 8) == '您的邀请码已发送') {
+                  $scope.logStatus = '您的验证码已发送，重新获取请稍后'
+                } else {
+                  $scope.logStatus = '验证码发送成功！'
+                }
               } else {
-                $scope.logStatus = '验证码发送成功！'
+                $scope.logStatus = '验证码发送失败，请稍后再试'
               }
             }, function (err) {
               $scope.logStatus = '验证码发送失败！'
@@ -449,12 +453,14 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
               smsType: 2
             }).then(function (data) {
               unablebutton()
-              if (data.mesg.substr(0, 8) == '您的邀请码已发送') {
-                $scope.logStatus = '您的验证码已发送，重新获取请稍后'
-              } else if (data.results == 1) {
-                $scope.logStatus = '验证码发送失败，请稍后再试'
+              if (data.results == 0) {
+                if (data.mesg.substr(0, 8) == '您的邀请码已发送') {
+                  $scope.logStatus = '您的验证码已发送，重新获取请稍后'
+                } else {
+                  $scope.logStatus = '验证码发送成功！'
+                }
               } else {
-                $scope.logStatus = '验证码发送成功！'
+                $scope.logStatus = '验证码发送失败，请稍后再试'
               }
             }, function (err) {
               $scope.logStatus = '验证码发送失败！'
@@ -468,12 +474,14 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
                 smsType: 2
               }).then(function (data) {
                 unablebutton()
-                if (data.mesg.substr(0, 8) == '您的邀请码已发送') {
-                  $scope.logStatus = '您的验证码已发送，重新获取请稍后'
-                } else if (data.results == 1) {
-                  $scope.logStatus = '验证码发送失败，请稍后再试'
+                if (data.results == 0) {
+                  if (data.mesg.substr(0, 8) == '您的邀请码已发送') {
+                    $scope.logStatus = '您的验证码已发送，重新获取请稍后'
+                  } else {
+                    $scope.logStatus = '验证码发送成功！'
+                  }
                 } else {
-                  $scope.logStatus = '验证码发送成功！'
+                  $scope.logStatus = '验证码发送失败，请稍后再试'
                 }
               }, function (err) {
                 $scope.logStatus = '验证码发送失败！'
@@ -488,12 +496,14 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
             smsType: 2
           }).then(function (data) {
             unablebutton()
-            if (data.mesg.substr(0, 8) == '您的邀请码已发送') {
-              $scope.logStatus = '您的验证码已发送，重新获取请稍后'
-            } else if (data.results == 1) {
-              $scope.logStatus = '验证码发送失败，请稍后再试'
+            if (data.results == 0) {
+              if (data.mesg.substr(0, 8) == '您的邀请码已发送') {
+                $scope.logStatus = '您的验证码已发送，重新获取请稍后'
+              } else {
+                $scope.logStatus = '验证码发送成功！'
+              }
             } else {
-              $scope.logStatus = '验证码发送成功！'
+              $scope.logStatus = '验证码发送失败，请稍后再试'
             }
           }, function (err) {
             $scope.logStatus = '验证码发送失败！'
@@ -3299,7 +3309,7 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
 }])
 
 // "我”设置页-mzb,zy
-.controller('setCtrl', ['$scope', '$ionicPopup', '$state', '$timeout', '$stateParams', 'Storage', '$sce', 'socket', 'mySocket', function ($scope, $ionicPopup, $state, $timeout, $stateParams, Storage, $sce, socket, mySocket) {
+.controller('setCtrl', ['$scope', '$ionicPopup', '$state', '$timeout', '$stateParams', 'Storage', '$sce', 'socket', 'mySocket', 'User', function ($scope, $ionicPopup, $state, $timeout, $stateParams, Storage, $sce, socket, mySocket, User) {
   $scope.hideTabs = true
   /**
    * [退出登录]
@@ -3307,23 +3317,27 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
    * @DateTime 2017-07-05
    */
   $scope.logout = function () {
-    socket.emit('disconnect')
-    // Storage.set('IsSignIn','NO');
-    $state.logStatus = '用户已注销'
-    // 清除登陆信息
-    Storage.rm('password')
-    // Storage.rm('UID');
-    Storage.rm('doctorunionid')
-    Storage.rm('IsSignIn')
-    // Storage.rm('USERNAME');
-    Storage.rm('PASSWORD')
-    Storage.rm('userid')
-    console.log($state)
-    mySocket.cancelAll()
-    socket.emit('disconnect')
-    socket.disconnect()
-    // $scope.navigation_login = $sce.trustAsResourceUrl('http://proxy.haihonghospitalmanagement.com/member.php?mod=logging&action=logout&formhash=xxxxxx')
-    $timeout(function () { $state.go('signin') }, 500)
+    User.logOut({}).then(function (data) {
+      socket.emit('disconnect')
+      // Storage.set('IsSignIn','NO');
+      $state.logStatus = '用户已注销'
+      // 清除登陆信息
+      Storage.rm('password')
+      // Storage.rm('UID');
+      Storage.rm('doctorunionid')
+      Storage.rm('IsSignIn')
+      // Storage.rm('USERNAME');
+      Storage.rm('PASSWORD')
+      Storage.rm('userid')
+      console.log($state)
+      mySocket.cancelAll()
+      socket.emit('disconnect')
+      socket.disconnect()
+      // $scope.navigation_login = $sce.trustAsResourceUrl('http://proxy.haihonghospitalmanagement.com/member.php?mod=logging&action=logout&formhash=xxxxxx')
+      $timeout(function () { $state.go('signin') }, 500)
+    }, function (err) {
+      console.log(err)
+    })
   }
 }])
 
@@ -4224,35 +4238,35 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
   $scope.illustration1 = function () {
     var alertPopup = $ionicPopup.alert({
       title: '咨询',
-      template: '咨询'
+      template: '患者对您进行咨询，您最多需做三次回答，答满三次后，本次咨询结束；如不满三个问题，24小时后咨询关闭。患者若购买您的主管医生，向您咨询免费。'
     })
   }
 
   $scope.illustration2 = function () {
     var alertPopup = $ionicPopup.alert({
       title: '问诊',
-      template: '问诊'
+      template: '患者对您进行问诊，询问次数不限，如您认为回答结束，请点击聊天页面右上角结束，24小时后自动关闭。患者若购买您的主管医生，向您问诊免费。'
     })
   }
 
   $scope.illustration3 = function () {
     var alertPopup = $ionicPopup.alert({
       title: '加急咨询',
-      template: '加急咨询'
+      template: '患者对您进行加急咨询，需在2小时内回复患者，您最多需做三次回答，答满三次后，咨询结束；如不满三个问题，2小时后咨询关闭。'
     })
   }
 
   $scope.illustration4 = function () {
     var alertPopup = $ionicPopup.alert({
       title: '主管医生',
-      template: '主管医生'
+      template: '主管医生服务包括为患者制定全面个性化的健康方案，并定期调整，数据分析解读，每月健康报告，以及每月免费咨询机会。患者若购买您的主管医生，向您咨询或问诊免费。'
     })
   }
 
   $scope.illustration5 = function () {
     var alertPopup = $ionicPopup.alert({
       title: '面诊服务',
-      template: '面诊服务'
+      template: '面诊患者可预约您的线下就诊时间，请您设定您的出诊时间／地点和人数。'
     })
   }
 }])
@@ -5272,11 +5286,10 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
     })
   }
 
-  // 点亮全部患者标签 显示全部患者
   $scope.ShowConfirming = function () {
     $scope.params.Confirming = true
   }
-  // 点亮今日新增标签 显示今日新增患者
+
   $scope.ShowHistory = function () {
     $scope.params.Confirming = false
   }
@@ -5442,6 +5455,7 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
       MassCommunication.massToPatient(msg).then(function (data) {
         console.log(data)
         $ionicLoading.show({ template: '发送成功！', duration: 1000 })
+        document.getElementById('123').value = ''
       }, function (err) {
         console.error(err)
         $ionicLoading.show({ template: '发送失败！', duration: 1000 })

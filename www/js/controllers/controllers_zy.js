@@ -370,7 +370,34 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
    */
   $scope.getcode = function (Verify) {
     $scope.logStatus = ''
-
+    // 发送验证码
+    var sendSMS = function (phone, count) {
+      // var count = 0
+      User.sendSMS({
+        mobile: phone,
+        smsType: 2
+      }).then(function (data) {
+        unablebutton()
+        if (data.results == 0) {
+          if (data.mesg.substr(0, 8) == '您的邀请码已发送') {
+            $scope.logStatus = '您的验证码已发送，重新获取请稍后'
+          } else {
+            $scope.logStatus = '验证码发送成功！'
+          }
+        } else {
+          $scope.logStatus = '验证码发送失败，请稍后再试'
+        }
+      }, function (err) {
+        count++
+        console.log(count)
+        if (count < 5) {
+          console.log(err)
+          setTimeout(sendSMS(Verify.Phone, count), 1000)
+        } else {
+          $scope.logStatus = '验证码发送失败！'
+        }
+      })
+    }
     if (Verify.Phone == '') {
       $scope.logStatus = '手机号码不能为空！'
       return
@@ -405,109 +432,29 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
              * @param    mobile: string; smsType(2是医生端): number
              * @return   data.mesg(验证码发送情况)
              */
-            User.sendSMS({
-              mobile: Verify.Phone,
-              smsType: 2
-            }).then(function (data) {
-              unablebutton()
-              if (data.results == 0) {
-                if (data.mesg.substr(0, 8) == '您的邀请码已发送') {
-                  $scope.logStatus = '您的验证码已发送，重新获取请稍后'
-                } else {
-                  $scope.logStatus = '验证码发送成功！'
-                }
-              } else {
-                $scope.logStatus = '验证码发送失败，请稍后再试'
-              }
-            }, function (err) {
-              $scope.logStatus = '验证码发送失败！'
-            })
+            sendSMS(Verify.Phone, 0)
           } else {
             Storage.set('UID', succ.AlluserId)
             if (succ.roles.indexOf('doctor') != -1) {
               // $scope.logStatus = '您已经注册，请输入正确的验证码完成绑定'
               $scope.haveExist = true
             }
-            User.sendSMS({
-              mobile: Verify.Phone,
-              smsType: 2
-            }).then(function (data) {
-              unablebutton()
-              if (data.results == 0) {
-                if (data.mesg.substr(0, 8) == '您的邀请码已发送') {
-                  $scope.logStatus = '您的验证码已发送，重新获取请稍后'
-                } else {
-                  $scope.logStatus = '验证码发送成功！'
-                }
-              } else {
-                $scope.logStatus = '验证码发送失败，请稍后再试'
-              }
-            }, function (err) {
-              $scope.logStatus = '验证码发送失败！'
-            })
+            sendSMS(Verify.Phone, 0)
           }
         } else if (validMode == 0) {
           if (succ.mesg == "Alluser doesn't Exist!") {
-            User.sendSMS({
-              mobile: Verify.Phone,
-              smsType: 2
-            }).then(function (data) {
-              unablebutton()
-              if (data.results == 0) {
-                if (data.mesg.substr(0, 8) == '您的邀请码已发送') {
-                  $scope.logStatus = '您的验证码已发送，重新获取请稍后'
-                } else {
-                  $scope.logStatus = '验证码发送成功！'
-                }
-              } else {
-                $scope.logStatus = '验证码发送失败，请稍后再试'
-              }
-            }, function (err) {
-              $scope.logStatus = '验证码发送失败！'
-            })
+            sendSMS(Verify.Phone, 0)
           } else {
             if (succ.roles.indexOf('doctor') != -1) {
               $scope.logStatus = '您已经注册过了'
             } else {
-              User.sendSMS({
-                mobile: Verify.Phone,
-                smsType: 2
-              }).then(function (data) {
-                unablebutton()
-                if (data.results == 0) {
-                  if (data.mesg.substr(0, 8) == '您的邀请码已发送') {
-                    $scope.logStatus = '您的验证码已发送，重新获取请稍后'
-                  } else {
-                    $scope.logStatus = '验证码发送成功！'
-                  }
-                } else {
-                  $scope.logStatus = '验证码发送失败，请稍后再试'
-                }
-              }, function (err) {
-                $scope.logStatus = '验证码发送失败！'
-              })
+              sendSMS(Verify.Phone, 0)
             }
           }
         } else if (validMode == 1 && succ.mesg == "Alluser doesn't Exist!") {
           $scope.logStatus = '您还没有注册呢！'
         } else {
-          User.sendSMS({
-            mobile: Verify.Phone,
-            smsType: 2
-          }).then(function (data) {
-            unablebutton()
-            if (data.results == 0) {
-              if (data.mesg.substr(0, 8) == '您的邀请码已发送') {
-                $scope.logStatus = '您的验证码已发送，重新获取请稍后'
-              } else {
-                $scope.logStatus = '验证码发送成功！'
-              }
-            } else {
-              $scope.logStatus = '验证码发送失败，请稍后再试'
-            }
-          }, function (err) {
-            $scope.logStatus = '验证码发送失败！'
-          })
+          sendSMS(Verify.Phone, 0)
         }
       }, function (err) {
         console.log(err)
@@ -5878,7 +5825,16 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
       anonymous: $scope.post.anonymous
     }
     console.log('param', param)
-    Forum.newpost(param).then(function (data) {
+
+    if($scope.post.title == ''){
+       $ionicLoading.show({
+          template: '输入不能为空',
+          noBackdrop: false,
+          duration: 1000,
+          hideOnStateChange: true
+        })
+    }else{
+      Forum.newpost(param).then(function (data) {
       console.log(data)
       if (data.msg == 'success') {
         $ionicLoading.show({
@@ -5899,6 +5855,7 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
       })
       console.log(err)
     })
+   }
   }
 
   $scope.onClickCamera = function ($event) {
@@ -6314,7 +6271,15 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
       postId: Storage.get('POSTID')
     }
     console.log('param', param)
-    Forum.comment(param).then(function (data) {
+    if($scope.post.content == ''){
+      $ionicLoading.show({
+          template: '输入不能为空',
+          noBackdrop: false,
+          duration: 1000,
+          hideOnStateChange: true
+        })
+    }else{
+        Forum.comment(param).then(function (data) {
       console.log(data)
       if (data.msg == 'success') {
         $ionicLoading.show({
@@ -6334,7 +6299,8 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
         hideOnStateChange: true
       })
       console.log(err)
-    })
+    }) 
+   }  
   }
 }])
 
@@ -6359,7 +6325,15 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
       at: Storage.get('AT')
     }
     console.log('param', param)
-    Forum.reply(param).then(function (data) {
+    if($scope.reply.content == ''){
+      $ionicLoading.show({
+          template: '输入不能为空',
+          noBackdrop: false,
+          duration: 1000,
+          hideOnStateChange: true
+        })
+    }else{
+      Forum.reply(param).then(function (data) {
       console.log(data)
       if (data.msg == 'success') {
         $ionicLoading.show({
@@ -6379,6 +6353,7 @@ angular.module('zy.controllers', ['ionic', 'kidney.services'])
         hideOnStateChange: true
       })
       console.log(err)
-    })
+    })   
+   }   
   }
 }])
